@@ -1,15 +1,19 @@
 <template>
-  <form>
+  <form @submit.prevent="handleSubmit">
     <input
+      required
       type="text"
       placeholder="Write title..."
       class="rounded w-full border-indigo-500 border-2 focus:border-2 focus:outline-none focus:ring-0 mb-2"
+      v-model="title"
     />
 
     <textarea
+      required
       rows="5"
       class="rounded w-full border-indigo-500 border-2 focus:border-2 focus:outline-none focus:ring-0 mb-2"
       placeholder="Write note description..."
+      v-model="description"
     ></textarea>
 
     <div class="flex mb-6">
@@ -30,19 +34,39 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   data() {
-    return {};
+    return {
+      title: "",
+      description: "",
+      selectedColor: "#e2e8f0",
+    };
   },
 
   methods: {
-    ...mapMutations(["selectColor"]),
+    selectColor(color) {
+      this.selectedColor = color;
+    },
+
+    handleSubmit() {
+      const newNotes = {
+        id: Date.now(),
+        title: this.title,
+        description: this.description,
+        color: this.selectedColor,
+      };
+
+      this.$store.commit("addNewNote", newNotes);
+      this.title = "";
+      this.description = "";
+      this.selectedColor = "#e2e8f0";
+    },
   },
 
   computed: {
-    ...mapState(["colors", "selectedColor"]),
+    ...mapState(["colors"]),
   },
 };
 </script>
